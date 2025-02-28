@@ -1,0 +1,85 @@
+{
+  "nodes": [
+    {
+      "id": "a1",
+      "name": "Fauchelevent",
+      "symbolSize": 30,
+      "x": 0,
+      "y": 0,
+      "value": 12,
+      "category": 0
+    },
+    {
+      "id": "b1",
+      "name": "b1b1",
+      "symbolSize": 20,
+      "x": 100,
+      "y": 100,
+      "value": 6,
+      "category": 0
+    },
+    {
+      "id": "b2",
+      "name": "b2b2",
+      "symbolSize": 20,
+      "x": 100,
+      "y": 140,
+      "value": 6,
+      "category": 0
+    },
+    {
+      "id": "b3",
+      "name": "b3b3",
+      "symbolSize": 20,
+      "x": 100,
+      "y": -180,
+      "value": 6,
+      "category": 0
+    },
+    {
+      "id": "b4",
+      "name": "b4b4b4b4",
+      "symbolSize": 20,
+      "x": -100,
+      "y": 100,
+      "value": 4,
+      "category": 0
+    },
+    {
+      "id": "c1",
+      "name": "c1c1",
+      "symbolSize": 10,
+      "x": 120,
+      "y": 120,
+      "value": 4,
+      "category": 0
+    }
+  ],
+  "links": [
+    {
+      "source": "b1",
+      "target": "a1"
+    },
+    {
+      "source": "b2",
+      "target": "a1"
+    },
+    {
+      "source": "b3",
+      "target": "a1"
+    },
+    {
+      "source": "b4",
+      "target": "a1"
+    },
+    {
+      "source": "c1",
+      "target": "b1"
+    }
+  ],
+  "categories": [
+    {
+      "name": "A"
+    }
+  ]
+}
