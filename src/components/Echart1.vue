@@ -4,43 +4,21 @@
       id="main"
       style="width: 400px; height: 400px; background: gainsboro"
     ></div>
-    <svg width="100" height="100">
-      <clipPath id="circleClip1"><circle cx="50" cy="50" r="50" /></clipPath>
-      <image
-        href="https://img2.woyaogexing.com/2021/05/23/0ae712cdf6ab4b018d3350dfa15f1147%21400x400.jpeg"
-        xlink:href="https://img2.woyaogexing.com/2021/05/23/0ae712cdf6ab4b018d3350dfa15f1147%21400x400.jpeg"
-        clip-path="url(#circleClip1)"
-        width="100"
-        height="100"
-      />
-    </svg>
-    <button id="convertButton">Convert Image</button>
-    <img id="originalImage" :src="imageLocal" alt="Original Image" />
-    <!-- src="https://img2.woyaogexing.com/2021/05/23/0ae712cdf6ab4b018d3350dfa15f1147%21400x400.jpeg" -->
-    <img id="base64Image" alt="Base64 Image" />
   </div>
 </template>
 
 <script>
 import * as echarts from 'echarts'
-import imageLocal from '../assets/112.jpg'
 export default {
   components: {},
   data() {
-    return {
-      viewType: 'level1',
-      baseImage: '',
-      imageLocal: imageLocal,
-      imageNet:
-        'https://img2.woyaogexing.com/2021/05/23/0ae712cdf6ab4b018d3350dfa15f1147%21400x400.jpeg'
-    }
+    return { viewType: 'level1' }
   },
   props: {},
   computed: {},
   watch: {},
   created() {},
   mounted() {
-    this.initBase64()
     this.initChartChangeNew()
   },
   methods: {
@@ -67,6 +45,8 @@ export default {
       ]
     },
     calcData(type = 'level1', centerName = '') {
+      let pic =
+        'image://data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7'
       this.viewType = type
       let baseData = this.baseData()
       let initialData = []
@@ -85,7 +65,7 @@ export default {
             initialData.push(tmp)
           }
           if (item.level == 1) {
-            // tmp.symbol = symbol
+            tmp.symbol = pic
             tmp.symbolSize = 40
             tmp.itemStyle = { color: '#5470c6' }
             initialData.push(tmp)
@@ -154,7 +134,7 @@ export default {
         initialLinks
       }
     },
-    async initChartChangeNew() {
+    initChartChangeNew() {
       var chartDom = document.getElementById('main')
       var myChart = echarts.init(chartDom)
       myChart.showLoading()
@@ -167,6 +147,7 @@ export default {
             type: 'graph',
             layout: 'force',
             force: {
+              // layoutAnimation: false,
               repulsion: 200
             },
             data: initialData,
@@ -177,25 +158,10 @@ export default {
             },
             lineStyle: {
               color: 'source'
-            },
-            // 设置节点样式为圆形裁剪
-            emphasis: {
-              itemStyle: {
-                borderColor: null,
-                borderCap: 'round'
-              }
-            },
-            roam: true
+            }
           }
         ]
       }
-
-      // let symbol = 'image://' + this.imageNet
-      // let symbol11 = 'image://' + this.useImage(this.imageNet)
-      let symbol = 'image://' + (await this.useImage(this.imageLocal))
-      // // let symbol = 'image://' + this.base64Image
-      option.series[0].data[0].symbol = symbol
-      console.log('symbol: ', symbol)
       // 使用刚指定的配置项和数据显示图表。
       myChart.setOption(option, true)
 
@@ -222,92 +188,6 @@ export default {
           // 更新图表
           option.series[0].force.initLayout = null
           myChart.setOption(option, true)
-        }
-      })
-    },
-    async useImage(imgUrl) {
-      try {
-        const img = new Image()
-        // 设置跨域属性，若图片服务器支持 CORS 可避免跨域问题
-        img.crossOrigin = 'anonymous'
-        img.src = imgUrl
-
-        // 等待图片加载完成
-        await new Promise((resolve, reject) => {
-          img.onload = resolve
-          img.onerror = reject
-        })
-
-        // 创建 canvas 元素
-        const canvas = document.createElement('canvas')
-        const size = Math.min(img.width, img.height)
-        canvas.width = size
-        canvas.height = size
-
-        const ctx = canvas.getContext('2d')
-        // 绘制圆形裁剪区域
-        ctx.beginPath()
-        ctx.arc(size / 2, size / 2, size / 2, 0, 2 * Math.PI)
-        ctx.closePath()
-        ctx.clip()
-
-        // 计算图片绘制的位置，使其居中
-        const x = (canvas.width - img.width) / 2
-        const y = (canvas.height - img.height) / 2
-        // 绘制图片到 canvas
-        ctx.drawImage(img, x, y)
-
-        // 转换为 Base64 格式
-        const base64 = canvas.toDataURL()
-        console.log('base64: ', base64)
-        return base64
-      } catch (error) {
-        console.error('Error converting image to base64:', error)
-      }
-    },
-    initBase64() {
-      const convertButton = document.getElementById('convertButton')
-      const originalImage = document.getElementById('originalImage')
-      const base64Image = document.getElementById('base64Image')
-
-      convertButton.addEventListener('click', async () => {
-        try {
-          const img = new Image()
-          // 设置跨域属性，若图片服务器支持 CORS 可避免跨域问题
-          img.crossOrigin = 'anonymous'
-          img.src = originalImage.src
-
-          // 等待图片加载完成
-          await new Promise((resolve, reject) => {
-            img.onload = resolve
-            img.onerror = reject
-          })
-
-          // 创建 canvas 元素
-          const canvas = document.createElement('canvas')
-          const size = Math.min(img.width, img.height)
-          canvas.width = size
-          canvas.height = size
-
-          const ctx = canvas.getContext('2d')
-          // 绘制圆形裁剪区域
-          ctx.beginPath()
-          ctx.arc(size / 2, size / 2, size / 2, 0, 2 * Math.PI)
-          ctx.closePath()
-          ctx.clip()
-
-          // 计算图片绘制的位置，使其居中
-          const x = (canvas.width - img.width) / 2
-          const y = (canvas.height - img.height) / 2
-          // 绘制图片到 canvas
-          ctx.drawImage(img, x, y)
-
-          // 转换为 Base64 格式
-          const base64 = canvas.toDataURL()
-          base64Image.src = base64
-          console.log(base64)
-        } catch (error) {
-          console.error('Error converting image to base64:', error)
         }
       })
     }
